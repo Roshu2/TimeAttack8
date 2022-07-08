@@ -1,6 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import permissions, status
+from post.permissions import IsCandidateUser
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .models import (
     JobPostSkillSet,
@@ -8,7 +10,7 @@ from .models import (
     JobPost,
     Company
 )
-from .serializers import JobPostSerializer
+from .serializers import JobPostSerializer, UserJobPostSerializer
 from django.db.models.query_utils import Q
 
 
@@ -67,3 +69,20 @@ class JobView(APIView):
             return Response(status=status.HTTP_200_OK)
 
         return Response(job_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class UserJobPostView(APIView):
+    permission_classes = [IsCandidateUser]
+    authentication_classes = [JWTAuthentication]
+    
+    def post(self, request):
+        user = request.user
+        request.data['user'] = user.id
+        
+        user_job_serializer = UserJobPostSerializer(data=request.data)
+        
+        if user_job_serializer.is_valid():
+            user_job_serializer.save()
+            return Response(user_job_serializer.data, status=status.HTTP_200_OK)
+        return Response(user_job_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        

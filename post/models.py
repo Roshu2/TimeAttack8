@@ -1,4 +1,5 @@
 from django.db import models
+from user.models import User
 
 
 class SkillSet(models.Model):
@@ -22,6 +23,7 @@ class JobType(models.Model):
 
 
 class JobPost(models.Model):
+    user = models.ManyToManyField(User, through='UserJobPost')
     job_type = models.ForeignKey(JobType, on_delete=models.SET_NULL, null=True)
     company = models.ForeignKey('Company', on_delete=models.SET_NULL, null=True)
     job_description = models.TextField()
@@ -31,6 +33,14 @@ class JobPost(models.Model):
 
     class Meta:
         db_table = 'job_posts'
+        
+        
+class UserJobPost(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    job_post = models.ForeignKey(JobPost, on_delete=models.SET_NULL, null=True)
+    
+    class Meta:
+        db_table = 'userjobposts'
 
 
 class Company(models.Model):

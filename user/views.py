@@ -7,7 +7,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import permissions, status
 
-
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from user.jwt_claim_serializer import TimeAttackTokenObtainPairSerializer
 from django.contrib.auth import login, authenticate, logout
 
 from .models import User, UserLog, UserType
@@ -51,4 +53,11 @@ class SignInView(APIView):
     def delete(self, request):
         logout(request)
         return Response({"message": "logout success!!"}, status=status.HTTP_200_OK)
+    
+    
+#JWT 로그인
+class TimeAttackTokenObtainPairView(TokenObtainPairView):
+    permission_classes = [permissions.AllowAny]
+    #serializer_class 변수에 커스터마이징 된 시리얼라이저를 넣어 준다!
+    serializer_class = TimeAttackTokenObtainPairSerializer
 

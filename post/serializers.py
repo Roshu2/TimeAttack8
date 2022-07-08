@@ -5,6 +5,7 @@ from .models import (
     JobPostSkillSet,
     JobType,
     JobPost,
+    UserJobPost,
     Company,
     CompanyBusinessArea,
     BusinessArea
@@ -41,7 +42,7 @@ class JobPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobPost
-        fields = ('id', 'position_type', 'company', 'job_description', 'salary', 'skiilsets')
+        fields = ('id', 'position_type', 'company', 'job_description', 'salary', 'skiilsets', 'user')
 
         extra_kwargs = {
             'job_type': {
@@ -77,3 +78,24 @@ class JobPostSkillSetSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobPostSkillSet
         fields = ('id', 'skill_set', 'job_post')
+        
+        
+class UserJobPostSerializer(serializers.ModelSerializer):
+
+    
+    
+    
+    class Meta:
+        model = UserJobPost
+        fields = ('id', 'user', 'job_post')
+        
+        extra_kwargs = {
+            'salary': {
+                # required : validator에서 해당 값의 필요 여부를 판단한다.
+                'required': False  # default : True
+            },
+            'job_description' : {
+                'required': False
+            },
+            
+        }
